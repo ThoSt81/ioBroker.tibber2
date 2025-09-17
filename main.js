@@ -41,7 +41,7 @@ class Tibber extends utils.Adapter {
 		myHeaders.append("Authorization", "Bearer " + this.config.access_token);
 		myHeaders.append("Content-Type", "application/json");
 
-		const graphql_query = "{viewer {homes {currentSubscription {priceInfo {current {total energy tax currency startsAt level} today {total energy tax currency startsAt level} tomorrow {total energy tax currency startsAt level}}}}}}",
+		const graphql_query = "{viewer {homes {currentSubscription {priceInfo(resolution: QUARTER_HOURLY) {current {total energy tax currency startsAt level} today {total energy tax currency startsAt level} tomorrow {total energy tax currency startsAt level}}}}}}",
 			graphql = JSON.stringify({
 			query: graphql_query,
 			//variables: {}
@@ -236,7 +236,7 @@ class Tibber extends utils.Adapter {
 						}
 						//do the same for today and tomorrow for all hours
 						else {
-							for (let i = 0; i <= 23; i++) {
+							for (let i = 0; i <= 95; i++) {
 								hour = this.subsequenceFromEndLast('0' + i, 1);
 								//this.log.info(hour);
 								state_name = 'priceInfo.' + day + '.' + hour + '.' + key;
@@ -515,7 +515,7 @@ class Tibber extends utils.Adapter {
 			for (let count = 0; count < hours; count++) {
 				let low = prices_sorted.shift();
 				let low_hour = (current_hour  + Preise.indexOf(low) + 1);
-				best_hours.push(low_hour < 24 ? low_hour : low_hour - 24);
+				best_hours.push(low_hour < 95 ? low_hour : low_hour - 95);
 				Preise[((Preise.indexOf(low) + 1) - 1)] = 9;
 			}
 			return best_hours.slice().sort(this.listsGetSortCompare("NUMERIC", 1));
